@@ -56,21 +56,21 @@ all: ${TMP} ${LIB} update_klusolve update_dss
 light: all
 	rm -fr ${TMP}
 
-# Build for 64bit ARM
-
-arm: ${TMP} ${LIB} update_klusolve update_dss
-	$(CC) \
-	-Parm  $(MACROS) \
-	${INPUT_DIRS} ${LIB_DIRS} ${USE_DIRS} -Fu${TMP} -FE${LIB} \
-	-Fl/usr/lib/gcc/arm-linux-gnueabihf/4.9/ \
-	-o${OUT} \
-	${CFLAGS} \
-	${OPENDSS_DIR}/Source/LazDSS/DirectDLL/OpenDSSDirect.lpr
-
-# Bild for x86_64 on Linux and delete unnecessary files afterwards
-
-light_arm: arm
-	rm -fr ${TMP}
+# # Build for 64bit ARM
+#
+# arm: ${TMP} ${LIB} update_klusolve update_dss
+# 	$(CC) \
+# 	-Parm  $(MACROS) \
+# 	${INPUT_DIRS} ${LIB_DIRS} ${USE_DIRS} -Fu${TMP} -FE${LIB} \
+# 	-Fl/usr/lib/gcc/arm-linux-gnueabihf/4.9/ \
+# 	-o${OUT} \
+# 	${CFLAGS} \
+# 	${OPENDSS_DIR}/Source/LazDSS/DirectDLL/OpenDSSDirect.lpr
+#
+# # Bild for x86_64 on Linux and delete unnecessary files afterwards
+#
+# light_arm: arm
+# 	rm -fr ${TMP}
 
 # Clean
 
@@ -108,23 +108,23 @@ ${LIB}:
 # Setup functions
 
 setup_Ubuntu:
-	sudo apt update
-	sudo apt upgrade
+	# sudo apt update
+	# sudo apt upgrade
 	sudo apt install build-essential lazarus subversion
 	sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
 	sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
 
-setup_RPi:
-	sudo apt-get update
-	sudo apt-get upgrade
-	sudo apt-get install build-essential subversion
-	sudo ln -sfv /usr/lib/arm-linux-gnueabihf/libstdc++.so.6 /usr/lib/arm-linux-gnueabihf/libstdc++.so
-	sudo ln -sfv /lib/arm-linux-gnueabihf/libgcc_s.so.1 /lib/arm-linux-gnueabihf/libgcc_s.so
-	# Install FPC 3.0.2
-	# wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.2/arm-linux/fpc-3.0.2.arm-linux-eabihf-raspberry.tar
-	# tar -xvf fpc-3.0.2.arm-linux-eabihf-raspberry.tar
-	# cd fpc-3.0.2.arm-linux && sudo ./install.sh
-	# Install FPC 3.0.0
-	wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.0/arm-linux/fpc-3.0.0.arm-linux-raspberry1wq.tar
-	tar -xvf fpc-3.0.0.arm-linux-raspberry1wq.tar
-	cd fpc-3.0.0.arm-linux && sudo ./install.sh
+# setup_RPi:
+# 	# sudo apt-get update
+# 	# sudo apt-get upgrade
+# 	sudo apt-get install build-essential subversion
+# 	sudo ln -sfv /usr/lib/arm-linux-gnueabihf/libstdc++.so.6 /usr/lib/arm-linux-gnueabihf/libstdc++.so
+# 	sudo ln -sfv /lib/arm-linux-gnueabihf/libgcc_s.so.1 /lib/arm-linux-gnueabihf/libgcc_s.so
+# 	# Install FPC 3.0.2
+# 	# wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.2/arm-linux/fpc-3.0.2.arm-linux-eabihf-raspberry.tar
+# 	# tar -xvf fpc-3.0.2.arm-linux-eabihf-raspberry.tar
+# 	# cd fpc-3.0.2.arm-linux && sudo ./install.sh
+# 	# Install FPC 3.0.0
+# 	wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.0/arm-linux/fpc-3.0.0.arm-linux-raspberry1wq.tar
+# 	tar -xvf fpc-3.0.0.arm-linux-raspberry1wq.tar
+# 	cd fpc-3.0.0.arm-linux && sudo ./install.sh
