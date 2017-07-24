@@ -117,7 +117,7 @@ setup_Ubuntu:
 	# Install FPC 3.0.2
 	wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar
 	tar -xvf fpc-3.0.2.x86_64-linux.tar
-	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh
+	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null
 
 # setup_RPi:
 # 	# sudo apt-get update
