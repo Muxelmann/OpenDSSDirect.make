@@ -1,6 +1,6 @@
 OPENDSS_DIR ?= electricdss
 
-CC		  = /usr/bin/fpc
+CC		  = fpc
 MACROS	= -MDelphi -Scghi -Ct -O2  -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
 CFLAGS	= -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL -dCPU64
 TMP		  = ./tmp
@@ -110,9 +110,14 @@ ${LIB}:
 setup_Ubuntu:
 	# sudo apt update
 	# sudo apt upgrade
-	sudo apt install build-essential lazarus subversion
+	# sudo apt install build-essential lazarus subversion
+	sudo apt install build-essential subversion
 	sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
 	sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+	# Install FPC 3.0.2
+	wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar
+	tar -xvf fpc-3.0.2.x86_64-linux.tar
+	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh
 
 # setup_RPi:
 # 	# sudo apt-get update
