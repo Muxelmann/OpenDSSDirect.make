@@ -1,0 +1,10 @@
+os:
+        - linux
+        # - osx
+install: true
+before_script:
+        - make setup_Ubuntu
+script:
+        - make all
+notifications:
+  email: false
