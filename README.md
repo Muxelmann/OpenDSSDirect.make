@@ -1,4 +1,4 @@
-# OpenDSSDirect.make [![Build Status](https://img.shields.io/travis/Muxelmann/OpenDSSDirect.make.svg?branch=master)](https://travis-ci.org/Muxelmann/OpenDSSDirect.make)
+# OpenDSSDirect.make [![Build Status](https://travis-ci.org/Muxelmann/OpenDSSDirect.make.svg?branch=master)](https://travis-ci.org/Muxelmann/OpenDSSDirect.make)
 
 This repo contains the complete procedure to generate updated versions of OpenDSS libraries.
 Updates are applied by downloading and compiling the original OpenDSS source code from [Subversion Repository](https://sourceforge.net/projects/electricdss/).
