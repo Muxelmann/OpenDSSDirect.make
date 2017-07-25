@@ -53,4 +53,4 @@ Also, making the project will download and compile a standalone KLUSolve, to ass
 
 ## Thanks
 
-Thanks to @kdheepak and Davis for their input.
+Thanks to @kdheepak (repo [here](https://github.com/NREL/OpenDSSDirect.py)) and Davis for their input.
