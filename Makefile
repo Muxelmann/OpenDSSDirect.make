@@ -1,16 +1,19 @@
-OPENDSS_DIR ?= electricdss
+OPENDSS_DIR  ?= electricdss
+KLUSOLVE     ?= KLUSolve
+TARGET       ?= dummy
 
-CC		  = fpc
-MACROS_LINUX	= -MDelphi -Scghi -Ct -O2  -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
-MACROS_MACOS	= -MDelphi -Scghi -Ct -O2 -l -vewnhibq
-CFLAGS	= -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL -dCPU64
-TMP		  = ./tmp
-LIB		  = ./lib
+SETUP_TARGET = setup_$(TARGET)
 
-KLUSOLVE      = KLUSolve
+CC            = fpc
+MACROS_LINUX  = -MDelphi -Scghi -Ct -O2  -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
+MACROS_MACOS  = -MDelphi -Scghi -Ct -O2 -l -vewnhibq
+CFLAGS        = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL -dCPU64
+TMP           = ./tmp
+LIB           = ./lib
+
 KLUSOLVE_LIB  = $(KLUSOLVE)/Lib
 KLUSOLVE_TEST = $(KLUSOLVE)/Test
-KLUSOLVE_OBJ = $(KLUSOLVE)/KLUSolve/Obj
+KLUSOLVE_OBJ  = $(KLUSOLVE)/KLUSolve/Obj
 
 OUT = libopendssdirect
 
@@ -43,7 +46,17 @@ USE_DIRS = \
 -Fu$(OPENDSS_DIR)/Source/LazDSS/Parser \
 -Fu$(OPENDSS_DIR)/Source/LazDSS/DirectDLL \
 
-all: linux
+all: $(TARGET)
+
+setup: $(SETUP_TARGET)
+
+# Define dummy dependencies
+
+dummy:
+	echo "Specify a target as: TARGET=linux or TARGET=macOS"
+
+setup_dummy:
+	echo "Specify a target as: TARGET=linux or TARGET=macOS"
 
 # Build for x86_64 on Linux
 
