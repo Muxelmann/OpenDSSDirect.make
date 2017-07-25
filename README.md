@@ -2,30 +2,34 @@
 
 This repo contains the complete procedure to generate updated versions of OpenDSS libraries.
 Updates are applied by downloading and compiling the original OpenDSS source code from [Subversion Repository](https://sourceforge.net/projects/electricdss/).
-The result is an updated library (e.g. `libopendssdirect.so` for Ubuntu Linux).
+The result is an updated library (e.g. `libopendssdirect.so` for Linux).
 
-**This package is available for Linux only. Mac and Windows are still to come.**
+**This package is available for Linux (64 bit) only. Mac and Windows are still to come.**
 
-## Usage - Ubuntu
+## Usage - Linux
 
 ### Setup
 
 Run the following or follow the steps below manually:
 
 ```
-make setup_Ubuntu
+make setup_linux
 ```
 
 <hr>
 
-Start by installing all prerequisites, including the standard compiler and lazarus (with Free Pascal). Also two additional symbolic links need to be added for the compilation to function correctly.
+Start by installing all prerequisites, including the `build-essential` package, Subversion and the Free Pascal Compiler (`fpc`).
+Also, two additional symbolic links are need to be added for the compilation to complete correctly.
 
 ```
-sudo apt update
-sudo apt upgrade
-sudo apt install build-essential lazarus subversion
+sudo apt install build-essential subversion
 sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
 sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar
+tar -xvf fpc-3.0.2.x86_64-linux.tar
+cd fpc-3.0.2.x86_64-linux
+sudo ./install.sh </dev/null
+cd ..
 ```
 
 ### Compile
@@ -48,4 +52,3 @@ Also, making the project will download and compile a standalone KLUSolve, to ass
 ## Thanks
 
 Thanks to @kdheepak and Davis for their input.
-

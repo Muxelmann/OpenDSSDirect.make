@@ -107,7 +107,7 @@ ${LIB}:
 
 # Setup functions
 
-setup_Ubuntu:
+setup_linux:
 	# sudo apt update
 	# sudo apt upgrade
 	# sudo apt install build-essential lazarus subversion
