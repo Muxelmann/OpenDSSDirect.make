@@ -166,7 +166,7 @@ setup_linux:
 
 setup_macOS:
 	brew install fpc
-	command -v svn >/dev/null 2>&1 && brew update subversion || brew install subversion
+	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
 	# brew install wget
 	# wget https://sourceforge.net/projects/freepascal/files/Mac\ OS\ X/3.0.2/fpc-3.0.2.intel-macosx.dmg
 	# sudo hdiutil attach fpc-3.0.2.intel-macosx.dmg
