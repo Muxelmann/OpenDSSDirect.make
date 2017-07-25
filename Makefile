@@ -124,7 +124,7 @@ update_klusolve: $(KLUSOLVE_DIR)
 	mkdir -p $(KLUSOLVE_LIB)
 	mkdir -p $(KLUSOLVE_TEST)
 	make -C $(KLUSOLVE_DIR) all
-	@[ -f $(KLUSOLVE_LIB)/libklusolve.so ] && cp $(KLUSOLVE_LIB)/libklusolve.so $(KLUSOLVE_LIB)/libklusolve.v`svnversion $(KLUSOLVE_DIR)`.so
+	@[ -f $(KLUSOLVE_LIB)/libklusolve.a ] && cp $(KLUSOLVE_LIB)/libklusolve.a $(KLUSOLVE_LIB)/libklusolve.v`svnversion $(KLUSOLVE_DIR)`.a
 
 update_klusolve_mac: $(KLUSOLVE_DIR)
 	svn update $(KLUSOLVE_DIR)
