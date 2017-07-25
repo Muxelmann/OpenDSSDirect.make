@@ -1,19 +1,16 @@
+language: ruby
 sudo: required
-language: python
-python:
-  - "3.5"
 os:
-  - linux
-  # - osx
-install: true
-before_script:
-  - sudo apt install build-essential subversion
-  - sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
-  - sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
-  - wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar
-  - tar -xvf fpc-3.0.2.x86_64-linux.tar
-  - cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd ..
-script:
-  - make all
-notifications:
-  email: false
+- linux
+- osx
+env:
+- TARGET=macOS
+- TARGET=linux
+matrix:
+  exclude:
+    - os: osx
+      env: TARGET=linux
+    - os: linux
+      env: TARGET=macOS
+before_script: make setup
+script: make

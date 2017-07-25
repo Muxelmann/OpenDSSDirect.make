@@ -6,16 +6,16 @@ This repo contains the complete procedure to generate updated versions of OpenDS
 Updates are applied by downloading and compiling the original OpenDSS source code from [Subversion Repository](https://sourceforge.net/projects/electricdss/).
 The result is an updated library (e.g. `libopendssdirect.so` for Linux).
 
-**This package is available for Linux (64 bit) only. Mac and Windows are still to come.**
+**This package is available for Linux and Mac (64 bit) only. Windows is still to come.**
 
-## Usage - Linux
+## Usage - linux
 
 ### Setup
 
 Run the following or follow the steps below manually:
 
 ```
-make setup_linux
+make setup TARGET=linux
 ```
 
 <hr>
@@ -39,17 +39,52 @@ cd ..
 Fully compile the library using:
 
 ```
-make
+make TARGET=linux
 ```
 
-This will save the final `libopendssdirect.so` in the `lib` directory, and a full copy of the OpenDSS source is stored in `electricdss`. If you want the OpenDSS source saved somewhere else, you can build like so:
+This will save the final `libopendssdirect.vXXXX.so` in the `Lib` directory in the OpenDSS repo folder.
+
+## Usage - macOS
+
+### Setup
+
+Make sure you have Xcode installed, then run the following or follow the steps below manually:
 
 ```
-make OPENDSS_DIR=some_other_dir
+make setup TARGET=macOS
 ```
 
-Also, making the project will download and compile a standalone KLUSolve, to assure it is compiled for the correct CPU architecture.
+<hr>
 
+Start by installing all prerequisites, including Subversion and the Free Pascal Compiler (`fpc`).
+
+```
+brew install fpc subversion
+```
+
+### Compile
+
+Fully compile the library using:
+
+```
+make TARGET=macOS
+```
+
+This will save the final `libopendssdirect.vXXXX.dylib` in the `Lib` directory in the OpenDSS repo folder.
+
+## Aside
+
+A full copy of the OpenDSS source is stored in `electricdss`. The directory can be changed by adjusting the `OPENDSS_DIR` variable. E.g.:
+
+```
+make OPENDSS_DIR=<different path> TARGET=<os/arch target>
+```
+
+Also, making the project will download and compile a standalone `KLUSolve` into a directory of the same name. This is to assure that the code compiles with the most up to date solver. You can change this directory by adjusting the `KLUSOLVE_DIR` variable. E.g:
+ 
+```
+make KLUSOLVE_DIR=<different path> TARGET=<os/arch target>
+```
 
 ## Thanks
 
