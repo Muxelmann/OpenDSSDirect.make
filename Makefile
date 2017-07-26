@@ -187,12 +187,12 @@ setup_linux:
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null
 
 setup_macOS:
-	brew install fpc || brew update fpc
-	brew install subversion || brew update subversion
-	@ # brew install wget
-	@ # wget https://sourceforge.net/projects/freepascal/files/Mac\ OS\ X/3.0.2/fpc-3.0.2.intel-macosx.dmg
-	@ # sudo hdiutil attach fpc-3.0.2.intel-macosx.dmg
-	@ # sudo installer -package /Volumes/fpc-3.0.2.intel-macosx/fpc-3.0.2.intel-macosx.pkg -target /
+	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
+	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
+	# brew install wget
+	# wget https://sourceforge.net/projects/freepascal/files/Mac\ OS\ X/3.0.2/fpc-3.0.2.intel-macosx.dmg
+	# sudo hdiutil attach fpc-3.0.2.intel-macosx.dmg
+	# sudo installer -package /Volumes/fpc-3.0.2.intel-macosx/fpc-3.0.2.intel-macosx.pkg -target /
 
 # setup_RPi:
 # 	# sudo apt-get update
