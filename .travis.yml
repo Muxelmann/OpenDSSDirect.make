@@ -3,14 +3,5 @@ sudo: required
 os:
 - linux
 - osx
-env:
-- TARGET=macOS
-- TARGET=linux
-matrix:
-  exclude:
-    - os: osx
-      env: TARGET=linux
-    - os: linux
-      env: TARGET=macOS
 before_script: make setup
 script: make
