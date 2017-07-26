@@ -8,19 +8,29 @@ The result is an updated library (e.g. `libopendssdirect.so` for Linux).
 
 **This package is available for Linux and Mac (64 bit) only. Windows is still to come.**
 
-## Usage - linux
+## Usage for Linux and macOS
 
 ### Setup
 
-Run the following or follow the steps below manually:
+To setup the compile environment, tun the following code. For macOS, make sure you have installed Xcode and its Command Line Tools. Alternatively, run follow the setup steps below; they are different **for Linux** and **for macOS**.
 
 ```
-make setup TARGET=linux
+make setup
 ```
 
-<hr>
+### Compile
 
-Start by installing all prerequisites, including the `build-essential` package, Subversion and the Free Pascal Compiler (`fpc`).
+Fully compile the library using:
+
+```
+make
+```
+
+This will save the final `libopendssdirect.rXXXX` file in the `Lib` directory in the OpenDSS repo folder. It is a `*.so` file for Linux and `*.dylib` for macOS. `rXXXX` 
+
+### Manual setup
+
+**For Linux**, start by installing all prerequisites, including the `build-essential` package, Subversion and the Free Pascal Compiler (`fpc`).
 Also, two additional symbolic links are need to be added for the compilation to complete correctly.
 
 ```
@@ -34,29 +44,7 @@ sudo ./install.sh </dev/null
 cd ..
 ```
 
-### Compile
-
-Fully compile the library using:
-
-```
-make TARGET=linux
-```
-
-This will save the final `libopendssdirect.vXXXX.so` in the `Lib` directory in the OpenDSS repo folder.
-
-## Usage - macOS
-
-### Setup
-
-Make sure you have Xcode installed, then run the following or follow the steps below manually:
-
-```
-make setup TARGET=macOS
-```
-
-<hr>
-
-Start by installing all prerequisites, including Subversion and the Free Pascal Compiler (`fpc`).
+**For macOS**, start by installing all prerequisites, including Subversion and the Free Pascal Compiler (`fpc`).
 
 ```
 brew install fpc subversion
