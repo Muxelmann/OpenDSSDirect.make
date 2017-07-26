@@ -168,30 +168,13 @@ setup:
 		sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so ; \
 		wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 		tar -xvf fpc-3.0.2.x86_64-linux.tar && \
-		cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null ; \
+		cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc* ; \
 	elif [ $(UNAME) = "Darwin" ] ; then \
 		command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc ; \
 		command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion ; \
 	else \
 		echo "System not supported for setup: \"$(UNAME)\"" ; \
 	fi
-
-# setup_linux:
-# 	sudo apt install build-essential subversion
-# 	sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
-# 	sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
-# 	@ # Install FPC 3.0.2
-# 	wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar
-# 	tar -xvf fpc-3.0.2.x86_64-linux.tar
-# 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null
-#
-# setup_macOS:
-# 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
-# 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
-# 	# brew install wget
-# 	# wget https://sourceforge.net/projects/freepascal/files/Mac\ OS\ X/3.0.2/fpc-3.0.2.intel-macosx.dmg
-# 	# sudo hdiutil attach fpc-3.0.2.intel-macosx.dmg
-# 	# sudo installer -package /Volumes/fpc-3.0.2.intel-macosx/fpc-3.0.2.intel-macosx.pkg -target /
 
 # setup_RPi:
 # 	# sudo apt-get update
