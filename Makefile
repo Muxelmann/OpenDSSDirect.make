@@ -52,9 +52,9 @@ USE_DIRS = \
 
 all:
 	@ if [ $(UNAME) = "Linux" ] ; then \
-		make all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) $(OPENDSS_TMP) $(OPENDSS_LIB) TARGET=linux ARCH_S=.a LIB_S=.so ; \
+		make all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) TARGET=linux ARCH_S=.a LIB_S=.so ; \
 	elif [ $(UNAME) = "Darwin" ] ; then \
-		make all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) $(OPENDSS_TMP) $(OPENDSS_LIB) TARGET=macOS ARCH_S=.dylib LIB_S=.dylib ; \
+		make all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) TARGET=macOS ARCH_S=.dylib LIB_S=.dylib ; \
 	else  \
 		echo "System not supported for making: \"$(UNAME)\"" ; \
 	fi
@@ -140,20 +140,21 @@ link_$(OPENDSS_DIR): $(OPENDSS_DIR)
 	fi
 	@ if [ -e $(OPENDSS_LIB)/$(OUT)$(LIB_S) ] ; then \
 		mv $(OPENDSS_LIB)/$(OUT)$(LIB_S) $(OPENDSS_LIB)/$(OUT).r`svnversion $(OPENDSS_DIR)`$(LIB_S) && \
-		ln -sr $(OPENDSS_LIB)/$(OUT).r`svnversion $(OPENDSS_DIR)`$(LIB_S) $(OPENDSS_LIB)/$(OUT)$(LIB_S) ; \
+		ln -s `pwd`/$(OPENDSS_LIB)/$(OUT).r`svnversion $(OPENDSS_DIR)`$(LIB_S) `pwd`/$(OPENDSS_LIB)/$(OUT)$(LIB_S) ; \
 	fi
 
 link_$(KLUSOLVE_DIR): $(KLUSOLVE_DIR)
 	@ if [ -e $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ] ; then \
 		mv $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) $(KLUSOLVE_LIB)/libklusolve.r`svnversion $(KLUSOLVE_DIR)`$(ARCH_S) && \
-		ln -sr $(KLUSOLVE_LIB)/libklusolve.r`svnversion $(KLUSOLVE_DIR)`$(ARCH_S) $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ; \
+		ln -s `pwd`/$(KLUSOLVE_LIB)/libklusolve.r`svnversion $(KLUSOLVE_DIR)`$(ARCH_S) `pwd`/$(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ; \
 	fi
 
 # Cleaning
 
 clean:
-	rm -rf $(OPENDSS_TMP)
-	rm -rf $(OPENDSS_LIB)
+	rm -rf $(OPENDSS_TMP)/*
+	rm -rf $(OPENDSS_LIB)/*
+	rm -rf $(KLUSOLVE_LIB)/*
 
 clean_all:
 	sudo rm -rf $(KLUSOLVE_DIR)
