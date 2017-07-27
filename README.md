@@ -26,12 +26,11 @@ Fully compile the library using:
 make
 ```
 
-This will save the final `libopendssdirect.rXXXX` file in the `Lib` directory in the OpenDSS repo folder. It is a `*.so` file for Linux and `*.dylib` for macOS. `rXXXX` 
+This will save the final `libopendssdirect.rXXXX` file in the `Lib` directory in the OpenDSS repo folder. It is a `*.so` file for Linux and `*.dylib` for macOS. `rXXXX` indicates the Subversion release from which it was built.
 
 ### Manual setup
 
-**For Linux**, start by installing all prerequisites, including the `build-essential` package, Subversion and the Free Pascal Compiler (`fpc`).
-Also, two additional symbolic links are need to be added for the compilation to complete correctly.
+**For Linux**, start by installing all prerequisites, including the `build-essential` package, Subversion and the Free Pascal Compiler (`fpc`). Also, two additional symbolic links are need to be added for the compilation to complete correctly.
 
 ```
 sudo apt install build-essential subversion
@@ -49,16 +48,6 @@ cd ..
 ```
 brew install fpc subversion
 ```
-
-### Compile
-
-Fully compile the library using:
-
-```
-make TARGET=macOS
-```
-
-This will save the final `libopendssdirect.vXXXX.dylib` in the `Lib` directory in the OpenDSS repo folder.
 
 ## Aside
 
