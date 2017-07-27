@@ -54,13 +54,13 @@ brew install fpc subversion
 A full copy of the OpenDSS source is stored in `electricdss`. The directory can be changed by adjusting the `OPENDSS_DIR` variable. E.g.:
 
 ```
-make OPENDSS_DIR=<different path> TARGET=<os/arch target>
+make OPENDSS_DIR=<different path>
 ```
 
 Also, making the project will download and compile a standalone `KLUSolve` into a directory of the same name. This is to assure that the code compiles with the most up to date solver. You can change this directory by adjusting the `KLUSOLVE_DIR` variable. E.g:
  
 ```
-make KLUSOLVE_DIR=<different path> TARGET=<os/arch target>
+make KLUSOLVE_DIR=<different path>
 ```
 
 ## Thanks
