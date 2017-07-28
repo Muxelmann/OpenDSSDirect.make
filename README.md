@@ -46,7 +46,8 @@ cd ..
 **For macOS**, start by installing all prerequisites, including Subversion and the Free Pascal Compiler (`fpc`).
 
 ```
-brew install fpc subversion
+brew install fpc
+brew install subversion
 ```
 
 ## Thanks

@@ -7,6 +7,7 @@ OPENDSS_DIR     = $(SOURCE)electricdss/
 KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 PWR_S          := `pwd`/
 UNAME_S        := $(shell uname)
+ARCH_S         := $(shell uname -m)
 
 CC              = fpc
 CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
@@ -14,22 +15,36 @@ LAZ_PROJ        = $(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
 
 KLUSOLVE_MAKE  ?= yes
 
+# For Linux (e.g. Mint, Ubuntu etc)
 ifeq ($(UNAME_S),Linux)
-MACROS          = -Tlinux -Px86_64 -MDelphi -Scghi -Cg -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
+MACROS          = -Tlinux -MDelphi -Scghi -Cg -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
-CFLAGS         += -dCPU64
+ifeq ($(ARCH_S),x86_64)
 UNIT_DIR        = x86_64-linux/
-# OUT             = $(OUT_NAME).x86_64-linux
+MACROS         += -Px86_64
+CFLAGS         += -dCPU64
+else ifneq ($(findstring arm,$(ARCH_S)),)
+$(error ARM NOT YET IMPLEMENTED! Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
+else
+$(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 endif
+endif
+
+# For Darwin (e.g. macOS)
 ifeq ($(UNAME_S),Darwin)
-MACROS          = -Tdarwin -Px86_64 -MDelphi -Scghi -FLld -Ct -O2 -k-r -k-lc -k-lm -k-lgcc_s.1 -k-lstdc++ -l -vewnhibq
+MACROS          = -Tdarwin -MDelphi -Scghi -FLld -Ct -O2 -k-r -k-lc -k-lm -k-lgcc_s.1 -k-lstdc++ -l -vewnhibq
 ARCH_SUFFIX     = .dylib
 LIB_SUFFIX      = .dylib
-CFLAGS         += -dCPU64
+ifeq ($(ARCH_S),x86_64)
 UNIT_DIR        = x86_64-darwin/
-# OUT             = $(OUT_NAME).x86_64-darwin
+MACROS         += -Px86_64
+CFLAGS         += -dCPU64
+else
+$(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 endif
+endif
+
 
 KLUSOLVE_URL    = https://svn.code.sf.net/p/klusolve/code/
 KLUSOLVE_OUT    = libklusolve
@@ -77,6 +92,7 @@ FPC_DIRS += \
 -Fu$(OPENDSS_DIR)LazDSS/DirectDLL \
 
 
+.PHONY: all
 all:
 ifeq ($(KLUSOLVE_MAKE),yes)
 	make KLUSolve
@@ -85,11 +101,9 @@ endif
 
 # KLUSolve repo management
 
+.PHONY: KLUSolve
 KLUSolve: $(KLUSOLVE_DIR)
 	svn update $<
-	@ if [ -h $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) ] ; then \
-		rm $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) ; \
-	fi
 	make -C $(KLUSOLVE_DIR) all || make -C $(KLUSOLVE_DIR) all
 ifeq ($(UNAME_S),Darwin)
 	install_name_tool -id @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
@@ -110,6 +124,7 @@ endif
 
 # OpenDSS repo management
 
+.PHONY: electricdss
 electricdss: $(OPENDSS_DIR)
 	svn update $<
 	$(CC) $(MACROS) $(FPC_DIRS) -FU$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
@@ -131,11 +146,13 @@ $(OPENDSS_DIR):
 
 # Cleaning
 
+.PHONY: clean
 clean:
 	rm -rf $(OPENDSS_TMP)*.*
 	rm -rf $(OPENDSS_LIB)*.*
 	make -C $(KLUSOLVE_DIR) clean
 
+.PHONY: clean_all
 clean_all:
 	sudo rm -rf $(SOURCE)
 
@@ -145,18 +162,22 @@ reset: clean_all
 
 # Setup functions
 
+.PHONY: setup
 setup:
-ifeq ($(UNAME_S),Linux)
+ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
 	sudo apt install build-essential subversion
 	sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
 	sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
 	wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
-endif
-ifeq ($(UNAME_S),Darwin)
+else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
+else ifneq ($(findstring arm,$(ARCH_S)),)
+	$(error ARM NOT YET IMPLEMENTED! Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
+else
+	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
 endif
 
 
