@@ -1,181 +1,180 @@
-OPENDSS_DIR  ?= electricdss
-KLUSOLVE_DIR ?= KLUSolve
-TARGET       ?= dummy
-UNAME        := $(shell uname)
+SOURCE          = _source/
+# https://github.com/NREL/OpenDSSDirect.py
+# https://github.com/tshort/OpenDSSDirect.jl
 
-CC            = fpc
-MACROS_LINUX  = -MDelphi -Scghi -Ct -O2  -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
-MACROS_MACOS  = -MDelphi -Scghi -Ct -O2 -l -vewnhibq
-CFLAGS        = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL -dCPU64
+LIB_DIR         = $(SOURCE)lib/
+OPENDSS_DIR     = $(SOURCE)electricdss/
+KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
+PWR_S          := `pwd`/
+UNAME_S        := $(shell uname)
 
-KLUSOLVE_URL  = https://svn.code.sf.net/p/klusolve/code/
-KLUSOLVE_LIB  = $(KLUSOLVE_DIR)/Lib
-KLUSOLVE_TEST = $(KLUSOLVE_DIR)/Test
-KLUSOLVE_OBJ  = $(KLUSOLVE_DIR)/KLUSolve/Obj
+CC              = fpc
+CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
+LAZ_PROJ        = $(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
 
-OPENDSS_URL   = https://svn.code.sf.net/p/electricdss/code/trunk/Source/
-OPENDSS_TMP   = $(OPENDSS_DIR)/Tmp
-OPENDSS_LIB   = $(OPENDSS_DIR)/Lib
+KLUSOLVE_MAKE  ?= yes
 
-OUT           = libopendssdirect
-ARCH_S       ?= .dummy
-LIB_S        ?= .dummy
+ifeq ($(UNAME_S),Linux)
+MACROS          = -Tlinux -Px86_64 -MDelphi -Scghi -Cg -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
+ARCH_SUFFIX     = .a
+LIB_SUFFIX      = .so
+CFLAGS         += -dCPU64
+UNIT_DIR        = x86_64-linux/
+# OUT             = $(OUT_NAME).x86_64-linux
+endif
+ifeq ($(UNAME_S),Darwin)
+MACROS          = -Tdarwin -Px86_64 -MDelphi -Scghi -FLld -Ct -O2 -k-r -k-lc -k-lm -k-lgcc_s.1 -k-lstdc++ -l -vewnhibq
+ARCH_SUFFIX     = .dylib
+LIB_SUFFIX      = .dylib
+CFLAGS         += -dCPU64
+UNIT_DIR        = x86_64-darwin/
+# OUT             = $(OUT_NAME).x86_64-darwin
+endif
 
-INPUT_DIRS = \
--Fi$(OPENDSS_DIR)/LazDSS/Forms \
--Fi$(OPENDSS_DIR)/LazDSS/Shared \
--Fi$(OPENDSS_DIR)/LazDSS/Common \
--Fi$(OPENDSS_DIR)/LazDSS/PDElements \
--Fi$(OPENDSS_DIR)/LazDSS/Controls \
--Fi$(OPENDSS_DIR)/LazDSS/General \
--Fi$(OPENDSS_DIR)/LazDSS/Plot \
--Fi$(OPENDSS_DIR)/LazDSS/Meters \
--Fi$(OPENDSS_DIR)/LazDSS/PCElements \
--Fi$(OPENDSS_DIR)/LazDSS/Executive \
--Fi$(OPENDSS_DIR)/LazDSS/Parser \
--Fi$(OPENDSS_DIR)/LazDSS/units/x86_64-linux
+KLUSOLVE_URL    = https://svn.code.sf.net/p/klusolve/code/
+KLUSOLVE_OUT    = libklusolve
+KLUSOLVE_LIB    = $(KLUSOLVE_DIR)Lib/
+KLUSOLVE_TEST   = $(KLUSOLVE_DIR)Test/
+KLUSOLVE_OBJ    = $(KLUSOLVE_DIR)KLUSolve/Obj/
+KLUSOLVE_VER   := .r`svnversion $(KLUSOLVE_DIR)`
 
-# LIB_DIRS = -Fl$(OPENDSS_DIR)/LazDSS/lib
-LIB_DIRS = -Fl$(KLUSOLVE_LIB)
+OPENDSS_URL     = https://svn.code.sf.net/p/electricdss/code/trunk/Source/
+OPENDSS_OUT     = libopendssdirect
+OPENDSS_TMP     = $(OPENDSS_DIR)Tmp/
+OPENDSS_LIB     = $(OPENDSS_DIR)Lib/
+OPENDSS_VER    := .r`svnversion $(OPENDSS_DIR)`
 
-USE_DIRS = \
--Fu$(OPENDSS_DIR)/LazDSS/Shared \
--Fu$(OPENDSS_DIR)/LazDSS/Common \
--Fu$(OPENDSS_DIR)/LazDSS/PDElements \
--Fu$(OPENDSS_DIR)/LazDSS/Controls \
--Fu$(OPENDSS_DIR)/LazDSS/General \
--Fu$(OPENDSS_DIR)/LazDSS/Meters \
--Fu$(OPENDSS_DIR)/LazDSS/PCElements \
--Fu$(OPENDSS_DIR)/LazDSS/Executive \
--Fu$(OPENDSS_DIR)/LazDSS/Parser \
--Fu$(OPENDSS_DIR)/LazDSS/DirectDLL \
+FPC_DIRS = \
+-Fi$(OPENDSS_DIR)LazDSS/Forms \
+-Fi$(OPENDSS_DIR)LazDSS/Shared \
+-Fi$(OPENDSS_DIR)LazDSS/Common \
+-Fi$(OPENDSS_DIR)LazDSS/PDElements \
+-Fi$(OPENDSS_DIR)LazDSS/Controls \
+-Fi$(OPENDSS_DIR)LazDSS/General \
+-Fi$(OPENDSS_DIR)LazDSS/Plot \
+-Fi$(OPENDSS_DIR)LazDSS/Meters \
+-Fi$(OPENDSS_DIR)LazDSS/PCElements \
+-Fi$(OPENDSS_DIR)LazDSS/Executive \
+-Fi$(OPENDSS_DIR)LazDSS/Parser \
+-Fi$(OPENDSS_TMP)
+
+ifeq ($(KLUSOLVE_MAKE),yes)
+FPC_DIRS       += -Fl$(LIB_DIR)$(UNIT_DIR)
+else
+FPC_DIRS       += -Fl$(OPENDSS_DIR)LazDSS/lib/
+endif
+
+FPC_DIRS += \
+-Fu$(OPENDSS_DIR)LazDSS/Shared \
+-Fu$(OPENDSS_DIR)LazDSS/Common \
+-Fu$(OPENDSS_DIR)LazDSS/PDElements \
+-Fu$(OPENDSS_DIR)LazDSS/Controls \
+-Fu$(OPENDSS_DIR)LazDSS/General \
+-Fu$(OPENDSS_DIR)LazDSS/Meters \
+-Fu$(OPENDSS_DIR)LazDSS/PCElements \
+-Fu$(OPENDSS_DIR)LazDSS/Executive \
+-Fu$(OPENDSS_DIR)LazDSS/Parser \
+-Fu$(OPENDSS_DIR)LazDSS/DirectDLL \
+
 
 all:
-	@ if [ $(UNAME) = "Linux" ] ; then \
-		make all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) TARGET=linux ARCH_S=.a LIB_S=.so ; \
-	elif [ $(UNAME) = "Darwin" ] ; then \
-		make all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) TARGET=macOS ARCH_S=.dylib LIB_S=.dylib ; \
-	else  \
-		echo "System not supported for making: \"$(UNAME)\"" ; \
-	fi
+ifeq ($(KLUSOLVE_MAKE),yes)
+	make KLUSolve
+endif
+	make electricdss
 
-# # Build for x86_64 on Linux
-#
-# all_linux: all_$(KLUSOLVE_DIR) all_$(OPENDSS_DIR) $(OPENDSS_TMP) $(OPENDSS_LIB)
-#
-# # Build for macOS
-#
-# all_macOS: all_$(KLUSOLVE_DIR) update_dss $(OPENDSS_TMP) $(OPENDSS_LIB)
+# KLUSolve repo management
+
+KLUSolve: $(KLUSOLVE_DIR)
+	svn update $<
+	@ if [ -h $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) ] ; then \
+		rm $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) ; \
+	fi
+	make -C $(KLUSOLVE_DIR) all || make -C $(KLUSOLVE_DIR) all
+ifeq ($(UNAME_S),Darwin)
+	install_name_tool -id @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
+	otool -L $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
+endif
+	mkdir -p $(LIB_DIR)$(UNIT_DIR)
+	cp $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX)
+	ln -sf $(PWR_S)$(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
+
+$(KLUSOLVE_DIR):
+	mkdir -p $@
+	svn checkout $(KLUSOLVE_URL) $@
+	mkdir -p $(KLUSOLVE_LIB)
+	mkdir -p $(KLUSOLVE_TEST)
+ifeq ($(UNAME_S),Darwin)
+	mkdir -p $(KLUSOLVE_OBJ)
+endif
+
+# OpenDSS repo management
+
+electricdss: $(OPENDSS_DIR)
+	svn update $<
+	$(CC) $(MACROS) $(FPC_DIRS) -FU$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
+	-o$(OPENDSS_OUT)$(LIB_SUFFIX) $(CFLAGS) $(LAZ_PROJ)
+ifeq ($(UNAME_S),Darwin)
+	install_name_tool -id @rpath/$(OPENDSS_OUT)$(LIB_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
+	install_name_tool -change ../Lib/libklusolve.dylib @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
+	otool -L $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
+endif
+	mkdir -p $(LIB_DIR)$(UNIT_DIR)
+	cp $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX)
+	ln -sf $(PWR_S)$(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(LIB_SUFFIX)
+
+$(OPENDSS_DIR):
+	mkdir -p $@
+	svn checkout $(OPENDSS_URL) $@
+	mkdir -p $(OPENDSS_TMP)
+	mkdir -p $(OPENDSS_LIB)
+
+# Cleaning
+
+clean:
+	rm -rf $(OPENDSS_TMP)*.*
+	rm -rf $(OPENDSS_LIB)*.*
+	make -C $(KLUSOLVE_DIR) clean
+
+clean_all:
+	sudo rm -rf $(SOURCE)
+
+reset: clean_all
+	sudo rm -rf $(LIB_PY)
+	sudo rm -rf $(LIB_JL)
+
+# Setup functions
+
+setup:
+ifeq ($(UNAME_S),Linux)
+	sudo apt install build-essential subversion
+	sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
+	sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+	wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
+	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
+	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
+endif
+ifeq ($(UNAME_S),Darwin)
+	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
+	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
+endif
+
 
 # # Build for 64bit ARM
 #
 # arm: $(OPENDSS_TMP) $(OPENDSS_LIB) update_klusolve update_dss
 # 	$(CC) \
 # 	-Parm  $(MACROS_LINUX) \
-# 	$(INPUT_DIRS) $(LIB_DIRS) $(USE_DIRS) -Fu$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
+# 	$(FPC_DIRS) $(LIB_DIRS) $(USE_DIRS) -Fu$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
 # 	-Fl/usr/lib/gcc/arm-linux-gnueabihf/4.9/ \
-# 	-o$(OUT) \
+# 	-o$(OPENDSS_OUT) \
 # 	$(CFLAGS) \
-# 	$(OPENDSS_DIR)/LazDSS/DirectDLL/OpenDSSDirect.lpr
+# 	$(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
 #
 # # Bild for x86_64 on Linux and delete unnecessary files afterwards
 #
 # light_arm: arm
 # 	rm -fr $(OPENDSS_TMP)
-
-# KLUSolve repo management
-
-all_$(KLUSOLVE_DIR): $(KLUSOLVE_DIR)
-	svn update $(KLUSOLVE_DIR)
-	mkdir -p $(KLUSOLVE_LIB)
-	mkdir -p $(KLUSOLVE_TEST)
-	@ if [ $(TARGET) = 'macOS' ] ; then \
-		mkdir -p $(KLUSOLVE_OBJ) ; \
-	fi
-	@ if [ -h $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ] ; then \
-		rm $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ; \
-	fi
-	make -C $(KLUSOLVE_DIR) all || make -C $(KLUSOLVE_DIR) all
-	make link_$(KLUSOLVE_DIR) ARCH_S=$(ARCH_S)
-
-$(KLUSOLVE_DIR):
-	mkdir -p $(KLUSOLVE_DIR)
-	svn checkout $(KLUSOLVE_URL) $(KLUSOLVE_DIR)
-
-# OpenDSS repo management
-
-all_$(OPENDSS_DIR): $(OPENDSS_DIR)
-	svn update $(OPENDSS_DIR)
-	@ if [ $(TARGET) = "linux" ] ; then \
-		$(CC) \
-		-Px86_64 -Cg $(MACROS_LINUX) \
-		$(INPUT_DIRS) $(LIB_DIRS) $(USE_DIRS) -FU$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
-		-o$(OUT)$(LIB_S) \
-		$(CFLAGS) \
-		$(OPENDSS_DIR)/LazDSS/DirectDLL/OpenDSSDirect.lpr && \
-		make link_$(OPENDSS_DIR) LIB_S=$(LIB_S) ; \
-	elif [ $(TARGET) = "macOS" ] ; then \
-		$(CC) \
-		-Px86_64 -Cg $(MACROS_MACOS) \
-		$(INPUT_DIRS) $(LIB_DIRS) $(USE_DIRS) -FU$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
-		-o$(OUT)$(LIB_S) \
-		$(CFLAGS) \
-		$(OPENDSS_DIR)/LazDSS/DirectDLL/OpenDSSDirect.lpr && \
-		make link_$(OPENDSS_DIR) LIB_S=$(LIB_S) ; \
-	else \
-		echo "Not supported: \"$(TARGET)\"" ; \
-	fi
-
-$(OPENDSS_DIR):
-	mkdir -p $(OPENDSS_DIR)
-	svn checkout $(OPENDSS_URL) $(OPENDSS_DIR)
-	mkdir -p $(OPENDSS_TMP)
-	mkdir -p $(OPENDSS_LIB)
-
-# Linking
-
-link_$(OPENDSS_DIR): $(OPENDSS_DIR)
-	@ if [ -h $(OPENDSS_LIB)/$(OUT)$(LIB_S) ] ; then \
-		rm $(OPENDSS_LIB)/$(OUT)$(LIB_S) ; \
-	fi
-	@ if [ -e $(OPENDSS_LIB)/$(OUT)$(LIB_S) ] ; then \
-		mv $(OPENDSS_LIB)/$(OUT)$(LIB_S) $(OPENDSS_LIB)/$(OUT).r`svnversion $(OPENDSS_DIR)`$(LIB_S) && \
-		ln -s `pwd`/$(OPENDSS_LIB)/$(OUT).r`svnversion $(OPENDSS_DIR)`$(LIB_S) `pwd`/$(OPENDSS_LIB)/$(OUT)$(LIB_S) ; \
-	fi
-
-link_$(KLUSOLVE_DIR): $(KLUSOLVE_DIR)
-	@ if [ -e $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ] ; then \
-		mv $(KLUSOLVE_LIB)/libklusolve$(ARCH_S) $(KLUSOLVE_LIB)/libklusolve.r`svnversion $(KLUSOLVE_DIR)`$(ARCH_S) && \
-		ln -s `pwd`/$(KLUSOLVE_LIB)/libklusolve.r`svnversion $(KLUSOLVE_DIR)`$(ARCH_S) `pwd`/$(KLUSOLVE_LIB)/libklusolve$(ARCH_S) ; \
-	fi
-
-# Cleaning
-
-clean:
-	rm -rf $(OPENDSS_TMP)/*
-	rm -rf $(OPENDSS_LIB)/*
-	rm -rf $(KLUSOLVE_LIB)/*
-
-clean_all:
-	sudo rm -rf $(KLUSOLVE_DIR)
-	sudo rm -rf $(OPENDSS_DIR)
-
-# Setup functions
-
-setup:
-	@ if [ $(UNAME) = "Linux" ] ; then \
-		sudo apt install build-essential subversion ; \
-		sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so ; \
-		sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so ; \
-		wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
-		tar -xvf fpc-3.0.2.x86_64-linux.tar && \
-		cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc* ; \
-	elif [ $(UNAME) = "Darwin" ] ; then \
-		command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc ; \
-		command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion ; \
-	else \
-		echo "System not supported for setup: \"$(UNAME)\"" ; \
-	fi
 
 # setup_RPi:
 # 	# sudo apt-get update
