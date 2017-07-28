@@ -26,7 +26,7 @@ Fully compile the library using:
 make
 ```
 
-This will save the final `libopendssdirect.rXXXX` file in the `Lib` directory in the OpenDSS repo folder. It is a `*.so` file for Linux and `*.dylib` for macOS. `rXXXX` indicates the Subversion release from which it was built.
+The results are saved as `libopendssdirect` in the `_source/lib` directory. They are stored according to system and SVN versioning of `electricdss` and `KLUSolve` at the time of building.
 
 ### Manual setup
 
@@ -47,20 +47,6 @@ cd ..
 
 ```
 brew install fpc subversion
-```
-
-## Aside
-
-A full copy of the OpenDSS source is stored in `electricdss`. The directory can be changed by adjusting the `OPENDSS_DIR` variable. E.g.:
-
-```
-make OPENDSS_DIR=<different path>
-```
-
-Also, making the project will download and compile a standalone `KLUSolve` into a directory of the same name. This is to assure that the code compiles with the most up to date solver. You can change this directory by adjusting the `KLUSOLVE_DIR` variable. E.g:
- 
-```
-make KLUSOLVE_DIR=<different path>
 ```
 
 ## Thanks
