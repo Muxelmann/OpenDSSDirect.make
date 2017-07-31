@@ -1,13 +1,13 @@
-SOURCE          = _source/
 # https://github.com/NREL/OpenDSSDirect.py
 # https://github.com/tshort/OpenDSSDirect.jl
 
-LIB_DIR         = $(SOURCE)lib/
-OPENDSS_DIR     = $(SOURCE)electricdss/
-KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
-PWR_S          := `pwd`/
 UNAME_S        := $(shell uname)
 ARCH_S         := $(shell uname -m)
+
+SOURCE          = _source/
+LIB_DIR         = _lib/
+OPENDSS_DIR     = $(SOURCE)electricdss/
+KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 
 CC              = fpc
 CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
@@ -25,7 +25,9 @@ UNIT_DIR        = x86_64-linux/
 MACROS         += -Px86_64
 CFLAGS         += -dCPU64
 else ifneq ($(findstring arm,$(ARCH_S)),)
-$(error ARM NOT YET IMPLEMENTED! Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
+UNIT_DIR        = $(ARCH_S)-linux/
+MACROS         += -Parm
+CFLAGS         += -dCPU64
 else
 $(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 endif
@@ -51,13 +53,13 @@ KLUSOLVE_OUT    = libklusolve
 KLUSOLVE_LIB    = $(KLUSOLVE_DIR)Lib/
 KLUSOLVE_TEST   = $(KLUSOLVE_DIR)Test/
 KLUSOLVE_OBJ    = $(KLUSOLVE_DIR)KLUSolve/Obj/
-KLUSOLVE_VER   := .r`svnversion $(KLUSOLVE_DIR)`
+KLUSOLVE_VER   := .r`svnversion $(abspath $(KLUSOLVE_DIR))`
 
 OPENDSS_URL     = https://svn.code.sf.net/p/electricdss/code/trunk/Source/
 OPENDSS_OUT     = libopendssdirect
 OPENDSS_TMP     = $(OPENDSS_DIR)Tmp/
 OPENDSS_LIB     = $(OPENDSS_DIR)Lib/
-OPENDSS_VER    := .r`svnversion $(OPENDSS_DIR)`
+OPENDSS_VER    := .r`svnversion $(abspath $(OPENDSS_DIR))`
 
 FPC_DIRS = \
 -Fi$(OPENDSS_DIR)LazDSS/Forms \
@@ -94,6 +96,9 @@ FPC_DIRS += \
 
 .PHONY: all
 all:
+#ifneq ($(findstring arm,$(ARCH_S)),)
+#	$(error ARM NOT YET IMPLEMENTED! Architecture $(ARCH_S) on $(UNAME_S) not supported for `make`)
+#endif
 ifeq ($(KLUSOLVE_MAKE),yes)
 	make KLUSolve
 endif
@@ -111,7 +116,8 @@ ifeq ($(UNAME_S),Darwin)
 endif
 	mkdir -p $(LIB_DIR)$(UNIT_DIR)
 	cp $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX)
-	ln -sf $(PWR_S)$(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
+	cd $(LIB_DIR)$(UNIT_DIR) && \
+	ln -sf $(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX) $(KLUSOLVE_OUT)$(ARCH_SUFFIX)
 
 $(KLUSOLVE_DIR):
 	mkdir -p $@
@@ -136,7 +142,8 @@ ifeq ($(UNAME_S),Darwin)
 endif
 	mkdir -p $(LIB_DIR)$(UNIT_DIR)
 	cp $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX)
-	ln -sf $(PWR_S)$(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(LIB_SUFFIX)
+	cd $(LIB_DIR)$(UNIT_DIR) && \
+	ln -sf $(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX) $(OPENDSS_OUT)$(LIB_SUFFIX)
 
 $(OPENDSS_DIR):
 	mkdir -p $@
@@ -166,16 +173,21 @@ reset: clean_all
 setup:
 ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
 	sudo apt install build-essential subversion
-	sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
-	sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
-	wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
+	@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
+	@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
 else ifneq ($(findstring arm,$(ARCH_S)),)
-	$(error ARM NOT YET IMPLEMENTED! Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
+	sudo apt-get install build-essential subversion
+	@ sudo ln -sfv /usr/lib/arm-linux-gnueabihf/libstdc++.so.6 /usr/lib/arm-linux-gnueabihf/libstdc++.so
+	@ sudo ln -sfv /lib/arm-linux-gnueabihf/libgcc_s.so.1 /lib/arm-linux-gnueabihf/libgcc_s.so
+	@ wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.2/arm-linux/fpc-3.0.2.arm-linux-eabihf-raspberry.tar && \
+	tar -xvf fpc-3.0.2.arm-linux-eabihf-raspberry.tar && \
+	cd fpc-3.0.2.arm-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else
 	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
 endif
