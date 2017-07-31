@@ -2,7 +2,7 @@ SOURCE          = _source/
 # https://github.com/NREL/OpenDSSDirect.py
 # https://github.com/tshort/OpenDSSDirect.jl
 
-LIB_DIR         = $(SOURCE)lib/
+LIB_DIR         = _lib/
 OPENDSS_DIR     = $(SOURCE)electricdss/
 KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 PWR_S          := `pwd`/
