@@ -1,13 +1,13 @@
-SOURCE          = _source/
 # https://github.com/NREL/OpenDSSDirect.py
 # https://github.com/tshort/OpenDSSDirect.jl
 
+UNAME_S        := $(shell uname)
+ARCH_S         := $(shell uname -m)
+
+SOURCE          = _source/
 LIB_DIR         = _lib/
 OPENDSS_DIR     = $(SOURCE)electricdss/
 KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
-PWR_S          := `pwd`/
-UNAME_S        := $(shell uname)
-ARCH_S         := $(shell uname -m)
 
 CC              = fpc
 CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
@@ -53,13 +53,13 @@ KLUSOLVE_OUT    = libklusolve
 KLUSOLVE_LIB    = $(KLUSOLVE_DIR)Lib/
 KLUSOLVE_TEST   = $(KLUSOLVE_DIR)Test/
 KLUSOLVE_OBJ    = $(KLUSOLVE_DIR)KLUSolve/Obj/
-KLUSOLVE_VER   := .r`svnversion $(KLUSOLVE_DIR)`
+KLUSOLVE_VER   := .r`svnversion $(abspath $(KLUSOLVE_DIR))`
 
 OPENDSS_URL     = https://svn.code.sf.net/p/electricdss/code/trunk/Source/
 OPENDSS_OUT     = libopendssdirect
 OPENDSS_TMP     = $(OPENDSS_DIR)Tmp/
 OPENDSS_LIB     = $(OPENDSS_DIR)Lib/
-OPENDSS_VER    := .r`svnversion $(OPENDSS_DIR)`
+OPENDSS_VER    := .r`svnversion $(abspath $(OPENDSS_DIR))`
 
 FPC_DIRS = \
 -Fi$(OPENDSS_DIR)LazDSS/Forms \
@@ -116,7 +116,8 @@ ifeq ($(UNAME_S),Darwin)
 endif
 	mkdir -p $(LIB_DIR)$(UNIT_DIR)
 	cp $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX)
-	ln -sf $(PWR_S)$(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
+	cd $(LIB_DIR)$(UNIT_DIR) && \
+	ln -sf $(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX) $(KLUSOLVE_OUT)$(ARCH_SUFFIX)
 
 $(KLUSOLVE_DIR):
 	mkdir -p $@
@@ -141,7 +142,8 @@ ifeq ($(UNAME_S),Darwin)
 endif
 	mkdir -p $(LIB_DIR)$(UNIT_DIR)
 	cp $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX)
-	ln -sf $(PWR_S)$(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(OPENDSS_OUT)$(LIB_SUFFIX)
+	cd $(LIB_DIR)$(UNIT_DIR) && \
+	ln -sf $(OPENDSS_OUT)$(OPENDSS_VER)$(LIB_SUFFIX) $(OPENDSS_OUT)$(LIB_SUFFIX)
 
 $(OPENDSS_DIR):
 	mkdir -p $@
