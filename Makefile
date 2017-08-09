@@ -27,7 +27,7 @@ CFLAGS         += -dCPU64
 else ifneq ($(findstring arm,$(ARCH_S)),)
 UNIT_DIR        = $(ARCH_S)-linux/
 MACROS         += -Parm
-CFLAGS         += -dCPU64
+CFLAGS         += -dCPU64 -Fl/usr/lib/gcc/arm-linux-gnueabihf/5/
 else
 $(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 endif
