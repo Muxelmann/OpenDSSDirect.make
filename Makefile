@@ -182,7 +182,7 @@ else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
 else ifneq ($(findstring arm,$(ARCH_S)),)
-	sudo apt-get install build-essential subversion
+	sudo apt install build-essential subversion
 	@ sudo ln -sfv /usr/lib/arm-linux-gnueabihf/libstdc++.so.6 /usr/lib/arm-linux-gnueabihf/libstdc++.so
 	@ sudo ln -sfv /lib/arm-linux-gnueabihf/libgcc_s.so.1 /lib/arm-linux-gnueabihf/libgcc_s.so
 	@ wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.2/arm-linux/fpc-3.0.2.arm-linux-eabihf-raspberry.tar && \
@@ -192,6 +192,17 @@ else
 	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
 endif
 
+.PHONY: setup_test
+setup_test:
+ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
+	sudo apt install python3
+else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
+	command -v python3 >/dev/null 2>&1 || brew install python3
+else ifneq ($(findstring arm,$(ARCH_S)),)
+	sudo apt install python3
+else
+	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup_test`)
+endif
 
 # # Build for 64bit ARM
 #
