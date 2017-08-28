@@ -17,16 +17,20 @@ KLUSOLVE_MAKE  ?= yes
 
 # For Linux (e.g. Mint, Ubuntu etc)
 ifeq ($(UNAME_S),Linux)
-MACROS          = -Tlinux -MDelphi -Scghi -Cg -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
+MACROS          = -Tlinux -MDelphi -Scghi -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
 ifeq ($(ARCH_S),x86_64)
 UNIT_DIR        = x86_64-linux/
-MACROS         += -Px86_64
+MACROS         += -Cg -Px86_64
 CFLAGS         += -dCPU64
+else ifeq ($(ARCH_S),i686)
+UNIT_DIR        = x86_32-linux/
+MACROS         += -Pi386
+# CFLAGS         += -dCPU64
 else ifneq ($(findstring arm,$(ARCH_S)),)
 UNIT_DIR        = $(ARCH_S)-linux/
-MACROS         += -Parm
+MACROS         += -Cg -Parm
 CFLAGS         += -dCPU64
 else
 $(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
@@ -178,6 +182,13 @@ ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
 	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
+else ifeq ($(UNAME_S).$(ARCH_S),Linux.i686)
+	sudo apt install build-essential subversion
+	@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
+	@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
+	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
+	tar -xvf fpc-3.0.2.i386-linux.tar && \
+	cd fpc-3.0.2.i386-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
