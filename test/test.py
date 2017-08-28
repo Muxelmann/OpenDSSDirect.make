@@ -21,8 +21,8 @@ else:
 CPU = platform.uname().machine
 if 'x86_64' in CPU:
 	CPU = 'x86_64'
-elif 'x86' in CPU:
-	CPU = 'x86'
+elif 'x86' in CPU or 'i386' in CPU or 'i686' in CPU:
+	CPU = 'x86_32'
 elif 'arm' in CPU:
 	CPU = CPU
 else:
