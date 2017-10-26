@@ -11,7 +11,7 @@ KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 
 CC              = fpc
 CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
-LAZ_PROJ        = $(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
+LAZ_PROJ        = $(OPENDSS_DIR)DDLL/OpenDSSDirect.lpr
 
 KLUSOLVE_MAKE  ?= yes
 
