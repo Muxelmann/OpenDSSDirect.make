@@ -6,7 +6,7 @@ This repo contains the complete procedure to generate updated versions of OpenDS
 Updates are applied by downloading and compiling the original OpenDSS source code from [Subversion Repository](https://sourceforge.net/projects/electricdss/).
 The result is an updated library (e.g. `libopendssdirect.so` for Linux).
 
-**This package is available for Linux and Mac (64 bit) only. Windows is still to come.**
+**This package is available only for Linux (64bit and 32bit) and Mac (64 bit). Windows support is still to come.**
 
 ## Usage for Linux and macOS
 
@@ -31,6 +31,7 @@ The results are saved as `libopendssdirect` in the `_source/lib` directory. They
 ### Manual setup
 
 **For Linux**, start by installing all prerequisites, including the `build-essential` package, Subversion and the Free Pascal Compiler (`fpc`). Also, two additional symbolic links are need to be added for the compilation to complete correctly.
+Make sure you use the correct architecture (the example below is `x86_64`).
 
 ```
 sudo apt install build-essential subversion
@@ -49,6 +50,12 @@ cd ..
 brew install fpc
 brew install subversion
 ```
+
+## Supported architectures
+
+- [x] Intel x86 64bit - e.g. `x86_64`
+- [x] Intel x86 32bit - e.g. `i386`, `i686`
+- [ ] ARM 64bit - e.g. `ARMv7`
 
 ## Thanks
 

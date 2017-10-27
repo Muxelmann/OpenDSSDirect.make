@@ -11,19 +11,23 @@ KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 
 CC              = fpc
 CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
-LAZ_PROJ        = $(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
+LAZ_PROJ        = $(OPENDSS_DIR)DDLL/OpenDSSDirect.lpr
 
 KLUSOLVE_MAKE  ?= yes
 
 # For Linux (e.g. Mint, Ubuntu etc)
 ifeq ($(UNAME_S),Linux)
-MACROS          = -Tlinux -MDelphi -Scghi -Cg -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
+MACROS          = -Tlinux -MDelphi -Scghi -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
 ifeq ($(ARCH_S),x86_64)
 UNIT_DIR        = x86_64-linux/
-MACROS         += -Px86_64
+MACROS         += -Cg -Px86_64
 CFLAGS         += -dCPU64
+else ifeq ($(ARCH_S),i686)
+UNIT_DIR        = x86_32-linux/
+MACROS         += -Pi386
+# CFLAGS         += -dCPU64
 else ifneq ($(findstring arm,$(ARCH_S)),)
 UNIT_DIR        = $(ARCH_S)-linux/
 MACROS         += -Parm
@@ -62,36 +66,45 @@ OPENDSS_LIB     = $(OPENDSS_DIR)Lib/
 OPENDSS_VER    := .r`svnversion $(abspath $(OPENDSS_DIR))`
 
 FPC_DIRS = \
--Fi$(OPENDSS_DIR)LazDSS/Forms \
--Fi$(OPENDSS_DIR)LazDSS/Shared \
--Fi$(OPENDSS_DIR)LazDSS/Common \
--Fi$(OPENDSS_DIR)LazDSS/PDElements \
--Fi$(OPENDSS_DIR)LazDSS/Controls \
--Fi$(OPENDSS_DIR)LazDSS/General \
--Fi$(OPENDSS_DIR)LazDSS/Plot \
--Fi$(OPENDSS_DIR)LazDSS/Meters \
--Fi$(OPENDSS_DIR)LazDSS/PCElements \
--Fi$(OPENDSS_DIR)LazDSS/Executive \
--Fi$(OPENDSS_DIR)LazDSS/Parser \
 -Fi$(OPENDSS_TMP)
 
 ifeq ($(KLUSOLVE_MAKE),yes)
 FPC_DIRS       += -Fl$(LIB_DIR)$(UNIT_DIR)
 else
-FPC_DIRS       += -Fl$(OPENDSS_DIR)LazDSS/lib/
+FPC_DIRS       += -Fl$(OPENDSS_DIR)lib/
 endif
 
 FPC_DIRS += \
--Fu$(OPENDSS_DIR)LazDSS/Shared \
--Fu$(OPENDSS_DIR)LazDSS/Common \
--Fu$(OPENDSS_DIR)LazDSS/PDElements \
--Fu$(OPENDSS_DIR)LazDSS/Controls \
--Fu$(OPENDSS_DIR)LazDSS/General \
--Fu$(OPENDSS_DIR)LazDSS/Meters \
--Fu$(OPENDSS_DIR)LazDSS/PCElements \
--Fu$(OPENDSS_DIR)LazDSS/Executive \
--Fu$(OPENDSS_DIR)LazDSS/Parser \
--Fu$(OPENDSS_DIR)LazDSS/DirectDLL \
+-Fu$(OPENDSS_DIR)IndMach012a \
+-Fu$(OPENDSS_DIR)General \
+-Fu$(OPENDSS_DIR)Plot \
+-Fu$(OPENDSS_DIR)DDLL \
+-Fu$(OPENDSS_DIR)Parallel_Lib \
+-Fu$(OPENDSS_DIR)PDElements \
+-Fu$(OPENDSS_DIR)CMD/test \
+-Fu$(OPENDSS_DIR)MyOpenDSS \
+-Fu$(OPENDSS_DIR)Lib \
+-Fu$(OPENDSS_DIR)x64 \
+-Fu$(OPENDSS_DIR)CommandLine \
+-Fu$(OPENDSS_DIR)PCElements \
+-Fu$(OPENDSS_DIR)CMD \
+-Fu$(OPENDSS_DIR)CMD/UbuntuProjectOptions \
+-Fu$(OPENDSS_DIR)DLL \
+-Fu$(OPENDSS_DIR)Tmp \
+-Fu$(OPENDSS_DIR)CMD/lib \
+-Fu$(OPENDSS_DIR)Archive \
+-Fu$(OPENDSS_DIR)Common \
+-Fu$(OPENDSS_DIR)Shared \
+-Fu$(OPENDSS_DIR)TPerlRegEx/pcre \
+-Fu$(OPENDSS_DIR)cdpsm_import \
+-Fu$(OPENDSS_DIR)Forms \
+-Fu$(OPENDSS_DIR)Controls \
+-Fu$(OPENDSS_DIR)Meters \
+-Fu$(OPENDSS_DIR)EXE \
+-Fu$(OPENDSS_DIR)Executive \
+-Fu$(OPENDSS_DIR)TPerlRegEx \
+-Fu$(OPENDSS_DIR)Parser \
+-Fu$(OPENDSS_DIR)x86 \
 
 
 .PHONY: all
@@ -178,11 +191,18 @@ ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
 	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
+else ifeq ($(UNAME_S).$(ARCH_S),Linux.i686)
+	sudo apt install build-essential subversion
+	@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
+	@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
+	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
+	tar -xvf fpc-3.0.2.i386-linux.tar && \
+	cd fpc-3.0.2.i386-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
 else ifneq ($(findstring arm,$(ARCH_S)),)
-	sudo apt-get install build-essential subversion
+	sudo apt install build-essential subversion
 	@ sudo ln -sfv /usr/lib/arm-linux-gnueabihf/libstdc++.so.6 /usr/lib/arm-linux-gnueabihf/libstdc++.so
 	@ sudo ln -sfv /lib/arm-linux-gnueabihf/libgcc_s.so.1 /lib/arm-linux-gnueabihf/libgcc_s.so
 	@ wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.2/arm-linux/fpc-3.0.2.arm-linux-eabihf-raspberry.tar && \
@@ -192,6 +212,17 @@ else
 	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
 endif
 
+.PHONY: setup_test
+setup_test:
+ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
+	sudo apt install python3
+else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
+	command -v python3 >/dev/null 2>&1 || brew install python3
+else ifneq ($(findstring arm,$(ARCH_S)),)
+	sudo apt install python3
+else
+	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup_test`)
+endif
 
 # # Build for 64bit ARM
 #
@@ -202,7 +233,7 @@ endif
 # 	-Fl/usr/lib/gcc/arm-linux-gnueabihf/4.9/ \
 # 	-o$(OPENDSS_OUT) \
 # 	$(CFLAGS) \
-# 	$(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
+# 	$(OPENDSS_DIR)/DDLL/OpenDSSDirect.lpr
 #
 # # Bild for x86_64 on Linux and delete unnecessary files afterwards
 #
