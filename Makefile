@@ -66,36 +66,45 @@ OPENDSS_LIB     = $(OPENDSS_DIR)Lib/
 OPENDSS_VER    := .r`svnversion $(abspath $(OPENDSS_DIR))`
 
 FPC_DIRS = \
--Fi$(OPENDSS_DIR)LazDSS/Forms \
--Fi$(OPENDSS_DIR)LazDSS/Shared \
--Fi$(OPENDSS_DIR)LazDSS/Common \
--Fi$(OPENDSS_DIR)LazDSS/PDElements \
--Fi$(OPENDSS_DIR)LazDSS/Controls \
--Fi$(OPENDSS_DIR)LazDSS/General \
--Fi$(OPENDSS_DIR)LazDSS/Plot \
--Fi$(OPENDSS_DIR)LazDSS/Meters \
--Fi$(OPENDSS_DIR)LazDSS/PCElements \
--Fi$(OPENDSS_DIR)LazDSS/Executive \
--Fi$(OPENDSS_DIR)LazDSS/Parser \
 -Fi$(OPENDSS_TMP)
 
 ifeq ($(KLUSOLVE_MAKE),yes)
 FPC_DIRS       += -Fl$(LIB_DIR)$(UNIT_DIR)
 else
-FPC_DIRS       += -Fl$(OPENDSS_DIR)LazDSS/lib/
+FPC_DIRS       += -Fl$(OPENDSS_DIR)lib/
 endif
 
 FPC_DIRS += \
--Fu$(OPENDSS_DIR)LazDSS/Shared \
--Fu$(OPENDSS_DIR)LazDSS/Common \
--Fu$(OPENDSS_DIR)LazDSS/PDElements \
--Fu$(OPENDSS_DIR)LazDSS/Controls \
--Fu$(OPENDSS_DIR)LazDSS/General \
--Fu$(OPENDSS_DIR)LazDSS/Meters \
--Fu$(OPENDSS_DIR)LazDSS/PCElements \
--Fu$(OPENDSS_DIR)LazDSS/Executive \
--Fu$(OPENDSS_DIR)LazDSS/Parser \
--Fu$(OPENDSS_DIR)LazDSS/DirectDLL \
+-Fu$(OPENDSS_DIR)IndMach012a \
+-Fu$(OPENDSS_DIR)General \
+-Fu$(OPENDSS_DIR)Plot \
+-Fu$(OPENDSS_DIR)DDLL \
+-Fu$(OPENDSS_DIR)Parallel_Lib \
+-Fu$(OPENDSS_DIR)PDElements \
+-Fu$(OPENDSS_DIR)CMD/test \
+-Fu$(OPENDSS_DIR)MyOpenDSS \
+-Fu$(OPENDSS_DIR)Lib \
+-Fu$(OPENDSS_DIR)x64 \
+-Fu$(OPENDSS_DIR)CommandLine \
+-Fu$(OPENDSS_DIR)PCElements \
+-Fu$(OPENDSS_DIR)CMD \
+-Fu$(OPENDSS_DIR)CMD/UbuntuProjectOptions \
+-Fu$(OPENDSS_DIR)DLL \
+-Fu$(OPENDSS_DIR)Tmp \
+-Fu$(OPENDSS_DIR)CMD/lib \
+-Fu$(OPENDSS_DIR)Archive \
+-Fu$(OPENDSS_DIR)Common \
+-Fu$(OPENDSS_DIR)Shared \
+-Fu$(OPENDSS_DIR)TPerlRegEx/pcre \
+-Fu$(OPENDSS_DIR)cdpsm_import \
+-Fu$(OPENDSS_DIR)Forms \
+-Fu$(OPENDSS_DIR)Controls \
+-Fu$(OPENDSS_DIR)Meters \
+-Fu$(OPENDSS_DIR)EXE \
+-Fu$(OPENDSS_DIR)Executive \
+-Fu$(OPENDSS_DIR)TPerlRegEx \
+-Fu$(OPENDSS_DIR)Parser \
+-Fu$(OPENDSS_DIR)x86 \
 
 
 .PHONY: all
@@ -224,7 +233,7 @@ endif
 # 	-Fl/usr/lib/gcc/arm-linux-gnueabihf/4.9/ \
 # 	-o$(OPENDSS_OUT) \
 # 	$(CFLAGS) \
-# 	$(OPENDSS_DIR)LazDSS/DirectDLL/OpenDSSDirect.lpr
+# 	$(OPENDSS_DIR)/DDLL/OpenDSSDirect.lpr
 #
 # # Bild for x86_64 on Linux and delete unnecessary files afterwards
 #
