@@ -9,29 +9,19 @@ LIB_DIR         = _lib/
 OPENDSS_DIR     = $(SOURCE)electricdss/
 KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 
-CC              = fpc
-CFLAGS          = -dBorland -dVer150 -dDelphi7 -dCompiler6_Up -dPUREPASCAL
-LAZ_PROJ        = $(OPENDSS_DIR)DDLL/OpenDSSDirect.lpr
-
-KLUSOLVE_MAKE  ?= yes
-
 # For Linux (e.g. Mint, Ubuntu etc)
 ifeq ($(UNAME_S),Linux)
-MACROS          = -Tlinux -MDelphi -Scghi -Ct -O2 -k-lc -k-lm -k-lgcc_s -k-lstdc++ -l -vewnhibq
+CC              = ppcx64
+CFLAGS					= @linuxopts.cfg
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
 ifeq ($(ARCH_S),x86_64)
+CC              = ppcx64
 UNIT_DIR        = x86_64-linux/
-MACROS         += -Cg -Px86_64
-CFLAGS         += -dCPU64
 else ifeq ($(ARCH_S),i686)
-UNIT_DIR        = x86_32-linux/
-MACROS         += -Pi386
-# CFLAGS         += -dCPU64
+$(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 else ifneq ($(findstring arm,$(ARCH_S)),)
-UNIT_DIR        = $(ARCH_S)-linux/
-MACROS         += -Parm
-CFLAGS         += -dCPU64 -Fl/usr/lib/gcc/arm-linux-gnueabihf/5/
+$(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 else
 $(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 endif
@@ -39,13 +29,12 @@ endif
 
 # For Darwin (e.g. macOS)
 ifeq ($(UNAME_S),Darwin)
-MACROS          = -Tdarwin -MDelphi -Scghi -FLld -Ct -O2 -k-r -k-lc -k-lm -k-lgcc_s.1 -k-lstdc++ -l -vewnhibq
+CFLAGS          = @fpcopts.cfg
 ARCH_SUFFIX     = .dylib
 LIB_SUFFIX      = .dylib
 ifeq ($(ARCH_S),x86_64)
+CC              = ppcx64
 UNIT_DIR        = x86_64-darwin/
-MACROS         += -Px86_64
-CFLAGS         += -dCPU64
 else
 $(error Architecture $(ARCH_S) on $(UNAME_S) not supported)
 endif
@@ -60,51 +49,13 @@ KLUSOLVE_OBJ    = $(KLUSOLVE_DIR)KLUSolve/Obj/
 KLUSOLVE_VER   := .r`svnversion $(abspath $(KLUSOLVE_DIR))`
 
 OPENDSS_URL     = https://svn.code.sf.net/p/electricdss/code/trunk/Source/
-OPENDSS_OUT     = libopendssdirect
+OPENDSS_OUT     = libOpenDSSDirect
+OPENDSS_PROJ	  = OpenDSSDirect.lpr
 OPENDSS_TMP     = $(OPENDSS_DIR)Tmp/
-OPENDSS_LIB     = $(OPENDSS_DIR)Lib/
+OPENDSS_LIB     = $(OPENDSS_DIR)DDLL/
 OPENDSS_VER    := .r`svnversion $(abspath $(OPENDSS_DIR))`
 
-FPC_DIRS = \
--Fi$(OPENDSS_TMP)
-
-ifeq ($(KLUSOLVE_MAKE),yes)
-FPC_DIRS       += -Fl$(LIB_DIR)$(UNIT_DIR)
-else
-FPC_DIRS       += -Fl$(OPENDSS_DIR)lib/
-endif
-
-FPC_DIRS += \
--Fu$(OPENDSS_DIR)IndMach012a \
--Fu$(OPENDSS_DIR)General \
--Fu$(OPENDSS_DIR)Plot \
--Fu$(OPENDSS_DIR)DDLL \
--Fu$(OPENDSS_DIR)Parallel_Lib \
--Fu$(OPENDSS_DIR)PDElements \
--Fu$(OPENDSS_DIR)CMD/test \
--Fu$(OPENDSS_DIR)MyOpenDSS \
--Fu$(OPENDSS_DIR)Lib \
--Fu$(OPENDSS_DIR)x64 \
--Fu$(OPENDSS_DIR)CommandLine \
--Fu$(OPENDSS_DIR)PCElements \
--Fu$(OPENDSS_DIR)CMD \
--Fu$(OPENDSS_DIR)CMD/UbuntuProjectOptions \
--Fu$(OPENDSS_DIR)DLL \
--Fu$(OPENDSS_DIR)Tmp \
--Fu$(OPENDSS_DIR)CMD/lib \
--Fu$(OPENDSS_DIR)Archive \
--Fu$(OPENDSS_DIR)Common \
--Fu$(OPENDSS_DIR)Shared \
--Fu$(OPENDSS_DIR)TPerlRegEx/pcre \
--Fu$(OPENDSS_DIR)cdpsm_import \
--Fu$(OPENDSS_DIR)Forms \
--Fu$(OPENDSS_DIR)Controls \
--Fu$(OPENDSS_DIR)Meters \
--Fu$(OPENDSS_DIR)EXE \
--Fu$(OPENDSS_DIR)Executive \
--Fu$(OPENDSS_DIR)TPerlRegEx \
--Fu$(OPENDSS_DIR)Parser \
--Fu$(OPENDSS_DIR)x86 \
+KLUSOLVE_DLL   += $(shell pwd)/$(LIB_DIR)$(UNIT_DIR)
 
 
 .PHONY: all
@@ -112,9 +63,7 @@ all:
 #ifneq ($(findstring arm,$(ARCH_S)),)
 #	$(error ARM NOT YET IMPLEMENTED! Architecture $(ARCH_S) on $(UNAME_S) not supported for `make`)
 #endif
-ifeq ($(KLUSOLVE_MAKE),yes)
 	make KLUSolve
-endif
 	make electricdss
 
 # KLUSolve repo management
@@ -129,7 +78,7 @@ ifeq ($(UNAME_S),Darwin)
 endif
 	mkdir -p $(LIB_DIR)$(UNIT_DIR)
 	cp $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(LIB_DIR)$(UNIT_DIR)$(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX)
-	cd $(LIB_DIR)$(UNIT_DIR) && \
+	cd $(KLUSOLVE_DLL) && \
 	ln -sf $(KLUSOLVE_OUT)$(KLUSOLVE_VER)$(ARCH_SUFFIX) $(KLUSOLVE_OUT)$(ARCH_SUFFIX)
 
 $(KLUSOLVE_DIR):
@@ -146,8 +95,7 @@ endif
 .PHONY: electricdss
 electricdss: $(OPENDSS_DIR)
 	svn update $<
-	$(CC) $(MACROS) $(FPC_DIRS) -FU$(OPENDSS_TMP) -FE$(OPENDSS_LIB) \
-	-o$(OPENDSS_OUT)$(LIB_SUFFIX) $(CFLAGS) $(LAZ_PROJ)
+	cd $(OPENDSS_LIB) && mkdir -p units && $(CC) $(CFLAGS) -Fl$(KLUSOLVE_DLL) $(OPENDSS_PROJ)
 ifeq ($(UNAME_S),Darwin)
 	install_name_tool -id @rpath/$(OPENDSS_OUT)$(LIB_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
 	install_name_tool -change ../Lib/libklusolve.dylib @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
@@ -169,7 +117,8 @@ $(OPENDSS_DIR):
 .PHONY: clean
 clean:
 	rm -rf $(OPENDSS_TMP)*.*
-	rm -rf $(OPENDSS_LIB)*.*
+	rm -rf $(OPENDSS_LIB)units
+	rm -rf $(OPENDSS_LIB)*.so
 	make -C $(KLUSOLVE_DIR) clean
 
 .PHONY: clean_all
