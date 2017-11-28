@@ -6,12 +6,12 @@ if 'Linux' in OS:
 	DLL = ctypes.CDLL
 	OS = 'linux'
 	klusolve = None
-	opendssdirect = 'libopendssdirect.so'
+	opendssdirect = 'libOpenDSSDirect.so'
 elif 'Darwin' in OS:
 	DLL = ctypes.CDLL
 	OS = 'darwin'
 	klusolve = 'libklusolve.dylib'
-	opendssdirect = 'libopendssdirect.dylib'
+	opendssdirect = 'libOpenDSSDirect.dylib'
 else:
 	DLL = ctypes.WinDLL
 	OS = 'windows'
