@@ -148,6 +148,7 @@ else ifeq ($(UNAME_S).$(ARCH_S),Linux.i686)
 	tar -xvf fpc-3.0.2.i386-linux.tar && \
 	cd fpc-3.0.2.i386-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
+	brew update
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
 else ifneq ($(findstring arm,$(ARCH_S)),)

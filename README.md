@@ -56,9 +56,9 @@ brew install subversion
 ## Supported architectures
 
 - [x] Intel x86 64bit - e.g. `x86_64`
-- [x] Intel x86 32bit - e.g. `i386`, `i686`
+- [ ] Intel x86 32bit - e.g. `i386`, `i686`
 - [ ] ARM 64bit - e.g. `ARMv7`
 
 ## Thanks
 
-Thanks to @kdheepak (repo [here](https://github.com/NREL/OpenDSSDirect.py)) and Davis for their input.
+Thanks to @kdheepak (repo [here](https://github.com/NREL/OpenDSSDirect.py)), @tshort (repo [here](https://github.com/tshort/OpenDSSDirect.jl)) and Davis for their input.
