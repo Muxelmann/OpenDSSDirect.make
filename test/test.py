@@ -1,5 +1,6 @@
 import platform
 import ctypes
+import os
 
 OS = platform.uname().system
 if 'Linux' in OS:
@@ -30,6 +31,9 @@ else:
 
 if CPU is None:
 	raise TypeError('Unsupported CPU {}'.format(platform.uname().machine))
+
+print('super directors: {}'.format(os.listdir('..')))
+print('library content: {}'.format(os.listdir('../_lib')))
 
 if klusolve is not None:
 	DLL('../_lib/{}-{}/{}'.format(CPU, OS, klusolve))
