@@ -1,17 +1,18 @@
 import platform
 import ctypes
+import os
 
 OS = platform.uname().system
 if 'Linux' in OS:
 	DLL = ctypes.CDLL
 	OS = 'linux'
 	klusolve = None
-	opendssdirect = 'libopendssdirect.so'
+	opendssdirect = 'libOpenDSSDirect.so'
 elif 'Darwin' in OS:
 	DLL = ctypes.CDLL
 	OS = 'darwin'
 	klusolve = 'libklusolve.dylib'
-	opendssdirect = 'libopendssdirect.dylib'
+	opendssdirect = 'libOpenDSSDirect.dylib'
 else:
 	DLL = ctypes.WinDLL
 	OS = 'windows'
@@ -30,6 +31,9 @@ else:
 
 if CPU is None:
 	raise TypeError('Unsupported CPU {}'.format(platform.uname().machine))
+
+print('super directors: {}'.format(os.listdir('..')))
+print('library content: {}'.format(os.listdir('../_lib')))
 
 if klusolve is not None:
 	DLL('../_lib/{}-{}/{}'.format(CPU, OS, klusolve))

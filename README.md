@@ -4,9 +4,11 @@
 
 This repo contains the complete procedure to generate updated versions of OpenDSS libraries.
 Updates are applied by downloading and compiling the original OpenDSS source code from [Subversion Repository](https://sourceforge.net/projects/electricdss/).
-The result is an updated library (e.g. `libopendssdirect.so` for Linux).
+The result is an updated library (e.g. `libOpenDSSDirect.so` for Linux).
 
-**This package is available only for Linux (64bit and 32bit) and Mac (64 bit). Windows support is still to come.**
+**This package is available only for Linux (64bit) and Mac (64 bit). 32bit and Windows support is still to come.**
+
+*This version is no longer based on the Lazarus project and uses the source code that is provided in the `electricdss/DDLL` directory instead.*
 
 ## Usage for Linux and macOS
 
@@ -54,9 +56,9 @@ brew install subversion
 ## Supported architectures
 
 - [x] Intel x86 64bit - e.g. `x86_64`
-- [x] Intel x86 32bit - e.g. `i386`, `i686`
+- [ ] Intel x86 32bit - e.g. `i386`, `i686`
 - [ ] ARM 64bit - e.g. `ARMv7`
 
 ## Thanks
 
-Thanks to @kdheepak (repo [here](https://github.com/NREL/OpenDSSDirect.py)) and Davis for their input.
+Thanks to @kdheepak (repo [here](https://github.com/NREL/OpenDSSDirect.py)), @tshort (repo [here](https://github.com/tshort/OpenDSSDirect.jl)) and Davis for their input.
