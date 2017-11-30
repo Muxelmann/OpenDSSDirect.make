@@ -13,6 +13,7 @@ KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 ifeq ($(UNAME_S),Linux)
 CC              = ppcx64
 CFLAGS					= @linuxopts.cfg
+LDFLAGS					= -k-L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
 ifeq ($(ARCH_S),x86_64)
@@ -95,7 +96,7 @@ endif
 .PHONY: electricdss
 electricdss: $(OPENDSS_DIR)
 	svn update $<
-	cd $(OPENDSS_LIB) && mkdir -p units && $(CC) $(CFLAGS) -Fl$(KLUSOLVE_DLL) $(OPENDSS_PROJ)
+	cd $(OPENDSS_LIB) && mkdir -p units && $(CC) $(CFLAGS) $(LDFLAGS) -Fl$(KLUSOLVE_DLL) $(OPENDSS_PROJ)
 ifeq ($(UNAME_S),Darwin)
 	install_name_tool -id @rpath/$(OPENDSS_OUT)$(LIB_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
 	install_name_tool -change ../Lib/libklusolve.dylib @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
