@@ -71,7 +71,7 @@ all:
 
 .PHONY: KLUSolve
 KLUSolve: $(KLUSOLVE_DIR)
-	svn update $<
+	svn update -r r2092 $<
 	make -C $(KLUSOLVE_DIR) all || make -C $(KLUSOLVE_DIR) all
 ifeq ($(UNAME_S),Darwin)
 	install_name_tool -id @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(KLUSOLVE_LIB)$(KLUSOLVE_OUT)$(ARCH_SUFFIX)
