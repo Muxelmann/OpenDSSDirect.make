@@ -9,11 +9,12 @@ LIB_DIR         = _lib/
 OPENDSS_DIR     = $(SOURCE)electricdss/
 KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 
-# For Linux (e.g. Mint, Ubuntu etc)
+# For Linux
 ifeq ($(UNAME_S),Linux)
 CC              = ppcx64
-CFLAGS					= @linuxopts.cfg
-LDFLAGS					= -k-L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/
+CFLAGS                                  = @linuxopts.cfg
+GCCLIB         := $(shell gcc --print-file-name=)
+LDFLAGS                                 = -k-L$(GCCLIB)
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
 ifeq ($(ARCH_S),x86_64)
