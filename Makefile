@@ -136,23 +136,7 @@ reset: clean_all
 .PHONY: setup
 setup:
 ifeq ($(UNAME_S),Linux)
-	sudo apt install build-essential subversion fp-compiler
-FPC_VERSION := $(shell fpc -iV)
-	ifeq (, $(findstring 3., $(FPC_VERSION)))
-		ifeq ($(ARCH_S),x86_64)
-			@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
-			@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
-			@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
-			tar -xvf fpc-3.0.2.x86_64-linux.tar && \
-			cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
-		else ifeq ($(ARCH_S),i686)
-			@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
-			@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
-			@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
-			tar -xvf fpc-3.0.2.i386-linux.tar && \
-			cd fpc-3.0.2.i386-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
-		endif
-	endif
+	sudo apt install build-essential subversion fpc
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	brew update
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
