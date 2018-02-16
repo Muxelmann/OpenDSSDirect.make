@@ -1,7 +1,8 @@
-language: ruby
+language: c
 sudo: required
 os:
   - linux
+    dist: xenial
   - osx
 before_script:
   - make setup
