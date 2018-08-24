@@ -135,17 +135,18 @@ reset: clean_all
 .PHONY: setup
 setup:
 ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
-	sudo apt install build-essential subversion
-	@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
-	@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
-	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
+	sudo apt update
+	sudo apt install build-essential subversion fpc
+#	@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
+#	@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+#	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Linux.i686)
-	sudo apt install build-essential subversion
-	@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
-	@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
-	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
+	sudo apt install build-essential subversion fpc
+#	@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
+#	@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
+#	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
 	tar -xvf fpc-3.0.2.i386-linux.tar && \
 	cd fpc-3.0.2.i386-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
@@ -162,6 +163,10 @@ else ifneq ($(findstring arm,$(ARCH_S)),)
 else
 	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
 endif
+
+.PHONY: test
+test: setup_test
+	cd test && python3 test.py
 
 .PHONY: setup_test
 setup_test:
