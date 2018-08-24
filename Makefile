@@ -96,7 +96,7 @@ endif
 
 .PHONY: electricdss
 electricdss: $(OPENDSS_DIR)
-	svn update -r r2092 $<
+	svn update $<
 	cd $(OPENDSS_LIB) && mkdir -p units && $(CC) $(CFLAGS) $(LDFLAGS) -Fl$(KLUSOLVE_DLL) -B $(OPENDSS_PROJ)
 ifeq ($(UNAME_S),Darwin)
 	install_name_tool -id @rpath/$(OPENDSS_OUT)$(LIB_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
