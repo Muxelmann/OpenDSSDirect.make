@@ -8,7 +8,7 @@ The result is an updated library (e.g. `libOpenDSSDirect.so` for Linux).
 
 **This package is available only for Linux (64bit) and Mac (64 bit). 32bit and Windows support is still to come.**
 
-*This version is no longer based on the Lazarus project and uses the source code that is provided in the `electricdss/DDLL` directory instead.*
+*This version is no longer based on the Lazarus project and uses the source code that is provided in the `electricdss` directory instead.*
 
 ## Usage for Linux and macOS
 
