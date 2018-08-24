@@ -136,6 +136,7 @@ reset: clean_all
 .PHONY: setup
 setup:
 ifeq ($(UNAME_S),Linux)
+	sudo apt update
 	sudo apt install build-essential subversion fpc
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	brew update
