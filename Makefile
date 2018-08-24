@@ -9,11 +9,12 @@ LIB_DIR         = _lib/
 OPENDSS_DIR     = $(SOURCE)electricdss/
 KLUSOLVE_DIR    = $(SOURCE)KLUSolve/
 
-# For Linux (e.g. Mint, Ubuntu etc)
+# For Linux
 ifeq ($(UNAME_S),Linux)
 CC              = ppcx64
-CFLAGS					= @linuxopts.cfg
-LDFLAGS					= -k-L/usr/lib/gcc/x86_64-redhat-linux/4.4.7/
+CFLAGS                                  = @linuxopts.cfg
+GCCLIB         := $(shell gcc --print-file-name=)
+LDFLAGS                                 = -k-L$(GCCLIB)
 ARCH_SUFFIX     = .a
 LIB_SUFFIX      = .so
 ifeq ($(ARCH_S),x86_64)
@@ -95,8 +96,8 @@ endif
 
 .PHONY: electricdss
 electricdss: $(OPENDSS_DIR)
-	svn update $<
-	cd $(OPENDSS_LIB) && mkdir -p units && $(CC) $(CFLAGS) $(LDFLAGS) -Fl$(KLUSOLVE_DLL) $(OPENDSS_PROJ)
+	svn update -r r2092 $<
+	cd $(OPENDSS_LIB) && mkdir -p units && $(CC) $(CFLAGS) $(LDFLAGS) -Fl$(KLUSOLVE_DLL) -B $(OPENDSS_PROJ)
 ifeq ($(UNAME_S),Darwin)
 	install_name_tool -id @rpath/$(OPENDSS_OUT)$(LIB_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
 	install_name_tool -change ../Lib/libklusolve.dylib @rpath/$(KLUSOLVE_OUT)$(ARCH_SUFFIX) $(OPENDSS_LIB)$(OPENDSS_OUT)$(LIB_SUFFIX)
@@ -134,32 +135,31 @@ reset: clean_all
 
 .PHONY: setup
 setup:
-ifeq ($(UNAME_S).$(ARCH_S),Linux.x86_64)
+ifeq ($(UNAME_S),Linux)
 	sudo apt update
-	sudo apt install build-essential subversion fpc
-#	@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
-#	@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
-#	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
+	sudo apt install build-essential subversion
+ifneq ($(findstring 3.,$(shell apt policy fpc | grep 'Candidate:' | cut -f2- -d:)),)
+	# FPC is version 3.x -> use apt version
+	sudo apt install fpc
+else
+ifeq ($(ARCH_S),x86_64)
+	@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
+	@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
 	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
 	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else ifeq ($(UNAME_S).$(ARCH_S),Linux.i686)
-	sudo apt install build-essential subversion fpc
-#	@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
-#	@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
-#	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
+	@ sudo ln -sfv /usr/lib/i386-linux-gnu/libstdc++.so.6 /usr/lib/i386-linux-gnu/libstdc++.so
+	@ sudo ln -sfv /lib/i386-linux-gnu/libgcc_s.so.1 /lib/i386-linux-gnu/libgcc_s.so
+	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.i386-linux.tar  && \
 	tar -xvf fpc-3.0.2.i386-linux.tar && \
 	cd fpc-3.0.2.i386-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
+endif
+endif
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	brew update
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
 	command -v svn >/dev/null 2>&1 && brew upgrade subversion || brew install subversion
-else ifneq ($(findstring arm,$(ARCH_S)),)
-	sudo apt install build-essential subversion
-	@ sudo ln -sfv /usr/lib/arm-linux-gnueabihf/libstdc++.so.6 /usr/lib/arm-linux-gnueabihf/libstdc++.so
-	@ sudo ln -sfv /lib/arm-linux-gnueabihf/libgcc_s.so.1 /lib/arm-linux-gnueabihf/libgcc_s.so
-	@ wget ftp://ftp.hu.freepascal.org/pub/fpc/dist/3.0.2/arm-linux/fpc-3.0.2.arm-linux-eabihf-raspberry.tar && \
-	tar -xvf fpc-3.0.2.arm-linux-eabihf-raspberry.tar && \
-	cd fpc-3.0.2.arm-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
 else
 	$(error Architecture $(ARCH_S) on $(UNAME_S) not supported for `make setup`)
 endif

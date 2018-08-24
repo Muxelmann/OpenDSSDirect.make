@@ -8,4 +8,10 @@ before_script:
 script:
   - make all
 after_script:
+<<<<<<< HEAD
   - make test
+=======
+  - make setup_test
+  - cd test
+  - set -e && python3 test.py
+>>>>>>> master
