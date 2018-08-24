@@ -137,7 +137,18 @@ reset: clean_all
 setup:
 ifeq ($(UNAME_S),Linux)
 	sudo apt update
-	sudo apt install build-essential subversion fpc
+	sudo apt install build-essential subversion
+ifneq ($(findstring 3.,$(shell apt policy fpc | grep 'Candidate:' | cut -f2- -d:)),)
+# FPC is version 3.x -> use apt version
+	sudo apt install fpc
+else
+# FPC not version 3.x -> use upstream version
+	@ sudo ln -sfv /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/lib/x86_64-linux-gnu/libstdc++.so
+	@ sudo ln -sfv /lib/x86_64-linux-gnu/libgcc_s.so.1 /lib/x86_64-linux-gnu/libgcc_s.so
+	@ wget https://sourceforge.net/projects/freepascal/files/Linux/3.0.2/fpc-3.0.2.x86_64-linux.tar  && \
+	tar -xvf fpc-3.0.2.x86_64-linux.tar && \
+	cd fpc-3.0.2.x86_64-linux && sudo ./install.sh </dev/null && cd .. && rm -rf fpc*
+endif
 else ifeq ($(UNAME_S).$(ARCH_S),Darwin.x86_64)
 	brew update
 	command -v fpc >/dev/null 2>&1 && brew upgrade fpc || brew install fpc
